@@ -40,4 +40,10 @@ public class ToDoController {
         toDoServiceImp.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @DeleteMapping()
+    public ResponseEntity<Void> deleteTodoAllReady() {
+        toDoServiceImp.deleteAllReady(true);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

@@ -33,4 +33,11 @@ public class ToDoServiceImp{
         toDoRepository.deleteById(id);
     }
 
+    public void deleteAllReady(Boolean status) {
+        /*List<ToDo> todos = toDoRepository.findByDoneTrue();
+        toDoRepository.deleteAll(todos);*/
+
+        toDoRepository.deleteByDoneTrue(status);
+    }
+
 }
