@@ -1,9 +1,10 @@
 package com.example.TODO.controller;
 
 import com.example.TODO.dto.response.ApiResponse;
+import com.example.TODO.dto.response.get.ApiResponseGet;
+import com.example.TODO.dto.response.TaskData;
+import com.example.TODO.dto.response.get.TodoResponseData;
 import com.example.TODO.dto.response.post.ApiResponsePost;
-import com.example.TODO.dto.response.post.TaskData;
-import com.example.TODO.dto.response.post.TodoResponseData;
 import com.example.TODO.entity.ToDo;
 import com.example.TODO.service.ToDoServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +35,29 @@ public class ToDoController {
     }
 */
     @GetMapping
-    public ResponseEntity<Page<ToDo>> getPaginated(
+    public ResponseEntity<ApiResponseGet> getPaginated(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int perPage){
-        return new ResponseEntity<>(toDoServiceImp.findAllPage(PageRequest.of(page, perPage)), HttpStatus.OK);
+
+        Page<ToDo> savedToDo = toDoServiceImp.findAllPage(PageRequest.of(page, perPage));
+
+        List<TaskData> content = new ArrayList<>();
+
+        List<ToDo> toDoList = savedToDo.getContent();
+        for (ToDo toDo : toDoList) {
+            TaskData taskData = convertToDoToTaskData(toDo);  // Replace 'convertToDoToTaskData' with your actual conversion logic
+            content.add(taskData);
+        }
+
+        List<ToDo> todos = toDoServiceImp.findAll();
+        Integer notReady = (int) todos.stream().filter(todo -> !todo.getDone()).count();
+        Integer ready = (int) todos.stream().filter(ToDo::getDone).count();
+
+        TodoResponseData data = new TodoResponseData(content, notReady, todos.size(), ready);
+        ApiResponseGet response = new ApiResponseGet(data, HttpStatus.OK.value(), true);
+
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -50,22 +70,14 @@ public class ToDoController {
 
         ToDo savedToDo = toDoServiceImp.save(toDo);
 
-        List<TaskData> content = new ArrayList<>();
-        content.add(
-                new TaskData(
-                        savedToDo.getCreatedAt(),
-                        savedToDo.getId(),
-                        savedToDo.getDone(),
-                        savedToDo.getDescription(),
-                        savedToDo.getUpdatedAt()
-                )
+        TaskData data = new TaskData(
+                savedToDo.getCreatedAt(),
+                savedToDo.getId(),
+                savedToDo.getDone(),
+                savedToDo.getDescription(),
+                savedToDo.getUpdatedAt()
         );
 
-        List<ToDo> todos = toDoServiceImp.findAll();
-        Integer notReady = (int) todos.stream().filter(todo -> !todo.getDone()).count();
-        Integer ready = (int) todos.stream().filter(ToDo::getDone).count();
-
-        TodoResponseData data = new TodoResponseData(content, notReady, todos.size(), ready);
         ApiResponsePost response = new ApiResponsePost(data, HttpStatus.CREATED.value(), true);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -108,5 +120,15 @@ public class ToDoController {
         String text = body.get("text");
         toDoServiceImp.changeTextById(id, text);
         return new ResponseEntity<>(new ApiResponse(true, 1), HttpStatus.OK);
+    }
+
+    public TaskData convertToDoToTaskData(ToDo toDo) {
+        return new TaskData(
+                toDo.getCreatedAt(),
+                toDo.getId(),
+                toDo.getDone(),
+                toDo.getDescription(),
+                toDo.getUpdatedAt()
+        );
     }
 }

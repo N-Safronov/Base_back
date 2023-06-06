@@ -1,5 +1,6 @@
-package com.example.TODO.dto.response.post;
+package com.example.TODO.dto.response.get;
 
+import com.example.TODO.dto.response.TaskData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
