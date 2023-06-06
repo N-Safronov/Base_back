@@ -1,6 +1,8 @@
 package com.example.TODO.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -14,9 +16,12 @@ public class ToDo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotNull(message = "Description cannot be null")
+    @NotEmpty(message = "Description cannot be empty")
     @Column(name = "description")
     private String description;
 
+    @NotNull(message = "Done cannot be null")
     @Column(name = "done")
     private Boolean done;
 

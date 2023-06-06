@@ -7,6 +7,7 @@ import com.example.TODO.dto.response.get.TodoResponseData;
 import com.example.TODO.dto.response.post.ApiResponsePost;
 import com.example.TODO.entity.ToDo;
 import com.example.TODO.service.ToDoServiceImp;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -66,7 +67,7 @@ public class ToDoController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponsePost> createToDo(@RequestBody ToDo toDo) {
+    public ResponseEntity<ApiResponsePost> createToDo(@Valid @RequestBody ToDo toDo) {
 
         ToDo savedToDo = toDoServiceImp.save(toDo);
 
@@ -96,7 +97,7 @@ public class ToDoController {
     }
 
     @PatchMapping
-    public ResponseEntity<ApiResponse> patchStatusTrue(@RequestBody Map<String, Boolean> body) {
+    public ResponseEntity<ApiResponse> patchStatusTrue(@Valid @RequestBody Map<String, Boolean> body) {
         Boolean status = body.get("status");
         toDoServiceImp.changeStatus(status);
         return new ResponseEntity<>(new ApiResponse(true, 1), HttpStatus.OK);
@@ -105,7 +106,7 @@ public class ToDoController {
     @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse> patchStatusId(
             @PathVariable("id") Integer id,
-            @RequestBody Map<String, Boolean> body
+            @Valid @RequestBody Map<String, Boolean> body
     ) {
         Boolean status = body.get("status");
         toDoServiceImp.changeStatusById(id, status);
@@ -115,7 +116,7 @@ public class ToDoController {
     @PatchMapping("/text/{id}")
     public ResponseEntity<ApiResponse> patchText(
             @PathVariable("id") Integer id,
-            @RequestBody Map<String, String> body
+            @Valid @RequestBody Map<String, String> body
     ) {
         String text = body.get("text");
         toDoServiceImp.changeTextById(id, text);
