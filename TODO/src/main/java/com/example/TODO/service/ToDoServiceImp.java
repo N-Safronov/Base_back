@@ -3,6 +3,8 @@ package com.example.TODO.service;
 import com.example.TODO.entity.ToDo;
 import com.example.TODO.repository.ToDoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +21,10 @@ public class ToDoServiceImp{
 
     public List<ToDo> findAll() {
         return toDoRepository.findAll();
+    }
+
+    public Page<ToDo> findAllPage(Pageable pageable) {
+        return toDoRepository.findAll(pageable);
     }
 
     public ToDo findById(Integer id) {
@@ -40,4 +46,15 @@ public class ToDoServiceImp{
         toDoRepository.deleteByDoneTrue(status);
     }
 
+    public void changeStatus(Boolean status){
+        toDoRepository.changeStatus(status);
+    }
+
+    public void changeStatusById(Integer id, Boolean status){
+        toDoRepository.changeStatusById(id, status);
+    }
+
+    public void changeTextById(Integer id, String status){
+        toDoRepository.changeTextById(id, status);
+    }
 }

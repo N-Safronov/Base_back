@@ -18,4 +18,20 @@ public interface ToDoRepository extends JpaRepository<ToDo, Integer> {
     @Modifying
     @Query("delete from ToDo t where t.done = :status")
     void deleteByDoneTrue(@Param("status") Boolean status);
+
+    @Transactional
+    @Modifying
+    @Query("update ToDo t set t.done = :status")
+    void changeStatus(@Param("status") Boolean status);
+
+    @Transactional
+    @Modifying
+    @Query("update ToDo t set t.done = :status where t.id = :id")
+    void changeStatusById(@Param("id") Integer id, @Param("status") Boolean status);
+
+
+    @Transactional
+    @Modifying
+    @Query("update ToDo t set t.description = :text where t.id = :id")
+    void changeTextById(@Param("id") Integer id, @Param("text") String text);
 }

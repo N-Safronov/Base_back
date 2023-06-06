@@ -17,4 +17,11 @@ public class ToDo {
 
     @Column(name = "done")
     private Boolean done;
+
+    @Column(name = "created_at")
+    private String createdAt;
+
+
+    @Column(name = "updated_at")
+    private String updatedAt;
 }
