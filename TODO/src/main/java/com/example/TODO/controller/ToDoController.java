@@ -84,15 +84,15 @@ public class ToDoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTodo(@PathVariable("id") Integer id) {
+    public ResponseEntity<ApiResponse> deleteTodo(@PathVariable("id") Integer id) {
         toDoServiceImp.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(new ApiResponse(true, 1), HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping()
-    public ResponseEntity<Void> deleteTodoAllReady() {
+    public ResponseEntity<ApiResponse> deleteTodoAllReady() {
         toDoServiceImp.deleteAllReady(true);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(new ApiResponse(true, 1), HttpStatus.NO_CONTENT);
     }
 
     @PatchMapping
