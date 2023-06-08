@@ -40,25 +40,10 @@ public class ToDoController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int perPage){
 
-        Page<ToDo> savedToDo = toDoServiceImp.findAllPage(PageRequest.of(page, perPage));
-
-        List<TaskData> content = new ArrayList<>();
-
-        List<ToDo> toDoList = savedToDo.getContent();
-        for (ToDo toDo : toDoList) {
-            TaskData taskData = convertToDoToTaskData(toDo);  // Replace 'convertToDoToTaskData' with your actual conversion logic
-            content.add(taskData);
-        }
-
-        List<ToDo> todos = toDoServiceImp.findAll();
-        Integer notReady = (int) todos.stream().filter(todo -> !todo.getDone()).count();
-        Integer ready = (int) todos.stream().filter(ToDo::getDone).count();
-
-        TodoResponseData data = new TodoResponseData(content, notReady, todos.size(), ready);
-        ApiResponseGet response = new ApiResponseGet(data, HttpStatus.OK.value(), true);
-
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(
+                toDoServiceImp.findAllPage(PageRequest.of(page, perPage)),
+                HttpStatus.OK
+        );
     }
 
     @GetMapping("/{id}")
@@ -68,20 +53,7 @@ public class ToDoController {
 
     @PostMapping
     public ResponseEntity<ApiResponsePost> createToDo(@Valid @RequestBody ToDo toDo) {
-
-        ToDo savedToDo = toDoServiceImp.save(toDo);
-
-        TaskData data = new TaskData(
-                savedToDo.getCreatedAt(),
-                savedToDo.getId(),
-                savedToDo.getDone(),
-                savedToDo.getDescription(),
-                savedToDo.getUpdatedAt()
-        );
-
-        ApiResponsePost response = new ApiResponsePost(data, HttpStatus.CREATED.value(), true);
-
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(toDoServiceImp.save(toDo), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
@@ -121,15 +93,5 @@ public class ToDoController {
         String text = body.get("text");
         toDoServiceImp.changeTextById(id, text);
         return new ResponseEntity<>(new ApiResponse(true, 1), HttpStatus.OK);
-    }
-
-    public TaskData convertToDoToTaskData(ToDo toDo) {
-        return new TaskData(
-                toDo.getCreatedAt(),
-                toDo.getId(),
-                toDo.getDone(),
-                toDo.getDescription(),
-                toDo.getUpdatedAt()
-        );
     }
 }
